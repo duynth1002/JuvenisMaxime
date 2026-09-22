@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { AuthGate, ResetDemoButton } from "@/components/auth";
-import { Badge, Button, EmptyState, Panel, ProgressBar } from "@/components/ui";
+import { AssignmentTemplateCard } from "@/components/template-card";
+import { Badge, Button, EmptyState, ProgressBar } from "@/components/ui";
 import { useStore } from "@/lib/store";
+import { getTrackTheme } from "@/lib/track-theme";
 
 export default function StudentDashboardPage() {
   return (
@@ -49,7 +51,7 @@ function StudentDashboard() {
           body="Ask an admin to assign a template from the admin dashboard."
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {assignments.map((assignment) => {
             const template = getTemplate(assignment.templateId);
             if (!template) return null;
@@ -59,36 +61,38 @@ function StudentDashboard() {
               (r) =>
                 r.assignmentId === assignment.id && r.status === "pending",
             );
+            const theme = getTrackTheme(template.track);
             return (
-              <Panel key={assignment.id} className="p-5">
-                <div className="mb-3 flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge
-                        tone={
-                          assignment.status === "completed"
-                            ? "success"
-                            : assignment.status === "in_progress"
-                              ? "teal"
-                              : "neutral"
-                        }
-                      >
-                        {assignment.status.replace("_", " ")}
-                      </Badge>
-                      {pending ? (
-                        <Badge tone="warning">awaiting approval</Badge>
-                      ) : null}
-                    </div>
-                    <h2 className="mt-2 font-[family-name:var(--font-display)] text-xl text-navy">
-                      {template.title}
-                    </h2>
-                    <p className="mt-1 text-sm text-muted">
-                      {template.description}
-                    </p>
-                  </div>
-                </div>
-                <ProgressBar value={done} total={total} label="Checklist" />
-                <div className="mt-5">
+              <AssignmentTemplateCard
+                key={assignment.id}
+                template={template}
+                statusBadge={
+                  <>
+                    <Badge
+                      tone={
+                        assignment.status === "completed"
+                          ? "success"
+                          : assignment.status === "in_progress"
+                            ? "teal"
+                            : "neutral"
+                      }
+                    >
+                      {assignment.status.replace("_", " ")}
+                    </Badge>
+                    {pending ? (
+                      <Badge tone="warning">awaiting approval</Badge>
+                    ) : null}
+                  </>
+                }
+                progress={
+                  <ProgressBar
+                    value={done}
+                    total={total}
+                    label="Checklist"
+                    barClassName={theme.bar}
+                  />
+                }
+                cta={
                   <Link href={`/task/${assignment.id}`}>
                     <Button className="w-full sm:w-auto">
                       {assignment.status === "completed"
@@ -100,8 +104,8 @@ function StudentDashboard() {
                             : "Start simulation"}
                     </Button>
                   </Link>
-                </div>
-              </Panel>
+                }
+              />
             );
           })}
         </div>

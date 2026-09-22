@@ -25,7 +25,7 @@ import type {
 } from "./types";
 import { normalizeStep } from "./step-content";
 
-const STORAGE_KEY = "jm-simulation-demo-v4";
+const STORAGE_KEY = "jm-simulation-demo-v6";
 
 type StoreContextValue = AppState & {
   hydrated: boolean;

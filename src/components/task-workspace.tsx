@@ -14,8 +14,10 @@ import {
   SubmissionWorkView,
 } from "@/components/step-submission";
 import { StepContentView } from "@/components/step-content-view";
+import { TrackChip } from "@/components/template-card";
 import { Badge, Button, Panel, ProgressBar } from "@/components/ui";
 import { useStore } from "@/lib/store";
+import { getTrackTheme } from "@/lib/track-theme";
 import type { Assignment, StepSubmission, TaskTemplate } from "@/lib/types";
 
 type StepUiStatus =
@@ -110,24 +112,31 @@ export function TaskWorkspace({
     submitStepForApproval(assignment.id, active.id, submission);
   }
 
+  const theme = getTrackTheme(template.track);
+
   return (
     <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-      <Panel className="h-fit p-4">
-        <div className="mb-4 space-y-3">
+      <Panel className={`h-fit overflow-hidden border ${theme.ring}`}>
+        <div className={`h-2 ${theme.banner}`} />
+        <div className={`space-y-3 bg-gradient-to-b ${theme.wash} p-4`}>
           <div>
-            <Badge tone="teal">{template.track}</Badge>
+            <TrackChip track={template.track} />
             <h2 className="mt-2 font-[family-name:var(--font-display)] text-xl text-navy">
               {template.title}
             </h2>
           </div>
-          <ProgressBar value={completedCount} total={steps.length} />
+          <ProgressBar
+            value={completedCount}
+            total={steps.length}
+            barClassName={theme.bar}
+          />
           {pendingForAssignment ? (
             <p className="rounded-xl bg-warning/10 px-3 py-2 text-xs text-warning">
               Waiting for admin approval before the next step unlocks.
             </p>
           ) : null}
         </div>
-        <ol className="space-y-2">
+        <ol className="space-y-2 p-4 pt-2">
           {steps.map((step) => {
             const status = preview
               ? step.id === active?.id
@@ -158,7 +167,7 @@ export function TaskWorkspace({
                   disabled={status === "locked" && !preview}
                   className={`flex w-full items-start gap-3 rounded-xl border px-3 py-3 text-left transition ${
                     active?.id === step.id
-                      ? "border-teal bg-teal/5"
+                      ? theme.active
                       : "border-transparent hover:bg-sand-deep/60"
                   } ${status === "locked" && !preview ? "cursor-not-allowed opacity-55" : ""}`}
                 >
@@ -169,7 +178,7 @@ export function TaskWorkspace({
                         : status === "pending"
                           ? "text-warning"
                           : status === "active"
-                            ? "text-teal"
+                            ? theme.accentText
                             : "text-muted"
                     }`}
                   />
@@ -189,12 +198,14 @@ export function TaskWorkspace({
         </ol>
       </Panel>
 
-      <Panel className="animate-rise p-5 sm:p-8">
+      <Panel className={`animate-rise overflow-hidden border ${theme.ring} p-0`}>
+        <div className={`h-1.5 ${theme.banner}`} />
+        <div className="p-5 sm:p-8">
         {active ? (
           <>
             <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-teal">
+                <p className={`text-xs font-medium uppercase tracking-[0.16em] ${theme.accentText}`}>
                   Step {active.order} of {steps.length}
                 </p>
                 <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-navy">
@@ -298,6 +309,7 @@ export function TaskWorkspace({
         ) : (
           <p className="text-sm text-muted">No steps in this template yet.</p>
         )}
+        </div>
       </Panel>
     </div>
   );

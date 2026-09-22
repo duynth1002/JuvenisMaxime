@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { AuthGate, ResetDemoButton } from "@/components/auth";
 import { AdminApprovalsQueue } from "@/components/admin-approvals";
+import { TrackChip } from "@/components/template-card";
 import { Badge, Button, Panel } from "@/components/ui";
 import { useStore } from "@/lib/store";
+import { getTrackTheme } from "@/lib/track-theme";
 
 export default function AdminDashboardPage() {
   return (
@@ -103,24 +105,39 @@ function AdminDashboard() {
             Templates
           </h2>
           <ul className="mt-4 space-y-3">
-            {templates.map((t) => (
-              <li
-                key={t.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-line px-3 py-3"
-              >
-                <div>
-                  <p className="text-sm font-medium text-navy">{t.title}</p>
-                  <p className="text-xs text-muted">
-                    {t.track} · {t.steps.length} steps
-                  </p>
-                </div>
-                <Link href={`/admin/templates/${t.id}/edit`}>
-                  <Button variant="ghost" className="!py-1.5 text-xs">
-                    Edit
-                  </Button>
-                </Link>
-              </li>
-            ))}
+            {templates.map((t) => {
+              const theme = getTrackTheme(t.track);
+              return (
+                <li
+                  key={t.id}
+                  className={`flex items-center justify-between gap-3 overflow-hidden rounded-xl border bg-gradient-to-r ${theme.wash} px-3 py-3 ${theme.ring}`}
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${theme.tile}`}
+                    >
+                      <theme.Icon className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-navy">
+                        {t.title}
+                      </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <TrackChip track={t.track} />
+                        <span className="text-xs text-muted">
+                          {t.steps.length} steps
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <Link href={`/admin/templates/${t.id}/edit`}>
+                    <Button variant="ghost" className="!py-1.5 text-xs">
+                      Edit
+                    </Button>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </Panel>
 
@@ -190,7 +207,7 @@ function AdminDashboard() {
                   <p className="text-xs text-muted">{student.email}</p>
                 </td>
                 <td className="py-3">
-                  <Badge tone="teal">{student.track}</Badge>
+                  <TrackChip track={student.track} />
                 </td>
                 <td className="py-3">
                   {theirs.length === 0 ? (

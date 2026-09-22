@@ -115,10 +115,12 @@ export function ProgressBar({
   value,
   total,
   label,
+  barClassName = "from-teal to-teal-bright",
 }: {
   value: number;
   total: number;
   label?: string;
+  barClassName?: string;
 }) {
   const pct = total === 0 ? 0 : Math.round((value / total) * 100);
   return (
@@ -131,7 +133,7 @@ export function ProgressBar({
       </div>
       <div className="h-2.5 overflow-hidden rounded-full bg-sand-deep">
         <div
-          className="progress-bar-fill h-full rounded-full bg-gradient-to-r from-teal to-teal-bright"
+          className={`progress-bar-fill h-full rounded-full bg-gradient-to-r ${barClassName}`}
           style={{ width: `${pct}%` }}
         />
       </div>

@@ -1,9 +1,30 @@
+export type HighlightColor = "amber" | "teal" | "rose" | "sky";
+
+export type TextHighlight = {
+  id: string;
+  start: number;
+  end: number;
+  color: HighlightColor;
+  note?: string;
+};
+
+export type StepMedia = {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  dataUrl: string;
+  caption?: string;
+};
+
 export type Step = {
   id: string;
   title: string;
   description: string;
   content: string;
   order: number;
+  highlights?: TextHighlight[];
+  media?: StepMedia[];
 };
 
 export type TaskTemplate = {

@@ -37,6 +37,43 @@ export const SEED_TEMPLATES: TaskTemplate[] = [
         description: "Understand Juvenis Maxime’s campaign goals and constraints.",
         content:
           "You are a junior marketer at a youth career brand. The client wants a 2-week social campaign that drives sign-ups for a job simulation workshop.\n\nGoals: 500 landing-page visits, 80 workshop registrations, brand-safe tone for students aged 16–22.\n\nConstraints: Budget = organic + one paid boost. Channels = Instagram + email. Deadline = Friday demo day.\n\nTask: Write 3 bullet points summarizing the brief in your own words (mentally), then mark this step complete.",
+        highlights: [
+          {
+            id: "m-1-hl-goals",
+            start: 146,
+            end: 245,
+            color: "amber",
+            note: "Primary success metrics",
+          },
+          {
+            id: "m-1-hl-constraints",
+            start: 247,
+            end: 352,
+            color: "rose",
+            note: "Stay inside these limits",
+          },
+          {
+            id: "m-1-hl-task",
+            start: 354,
+            end: 463,
+            color: "teal",
+            note: "Your deliverable for this step",
+          },
+        ],
+        media: [
+          {
+            id: "m-1-media-brief",
+            name: "campaign-brief-board.svg",
+            type: "image/svg+xml",
+            size: 520,
+            caption: "Client brief snapshot — goals, channels, deadline",
+            dataUrl:
+              "data:image/svg+xml," +
+              encodeURIComponent(
+                `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><rect width="640" height="360" fill="#0c2340"/><rect x="28" y="28" width="584" height="304" rx="18" fill="#fffcf7"/><text x="56" y="88" fill="#0c2340" font-family="Georgia, serif" font-size="28">Campaign brief board</text><text x="56" y="140" fill="#0f766e" font-family="Arial, sans-serif" font-size="16">GOAL · 500 visits · 80 registrations</text><text x="56" y="178" fill="#5b6678" font-family="Arial, sans-serif" font-size="16">CHANNELS · Instagram + email</text><text x="56" y="216" fill="#5b6678" font-family="Arial, sans-serif" font-size="16">DEADLINE · Friday demo day</text><text x="56" y="270" fill="#0c2340" font-family="Arial, sans-serif" font-size="14">Juvenis Maxime · Job Simulation</text></svg>`,
+              ),
+          },
+        ],
       },
       {
         id: "m-2",

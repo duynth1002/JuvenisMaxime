@@ -17,10 +17,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { FileImage, GripVertical, Highlighter, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { StepRichEditor } from "@/components/step-rich-editor";
 import { Button, Panel } from "@/components/ui";
 import { useStore } from "@/lib/store";
+import { normalizeStep } from "@/lib/step-content";
 import type { Step, TaskTemplate } from "@/lib/types";
 
 function useSelectedStep(steps: Step[]) {
@@ -51,6 +53,7 @@ function SortableStep({
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: step.id });
   const { removeStep } = useStore();
+  const normalized = normalizeStep(step);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -92,6 +95,20 @@ function SortableStep({
         <p className="mt-1 line-clamp-2 pl-8 text-xs text-muted">
           {step.description}
         </p>
+        <div className="mt-1.5 flex gap-2 pl-8 text-[10px] uppercase tracking-wide text-muted">
+          {(normalized.highlights?.length ?? 0) > 0 ? (
+            <span className="inline-flex items-center gap-1 text-teal">
+              <Highlighter className="h-3 w-3" />
+              {normalized.highlights!.length}
+            </span>
+          ) : null}
+          {(normalized.media?.length ?? 0) > 0 ? (
+            <span className="inline-flex items-center gap-1 text-teal">
+              <FileImage className="h-3 w-3" />
+              {normalized.media!.length}
+            </span>
+          ) : null}
+        </div>
       </button>
       <button
         type="button"
@@ -128,7 +145,7 @@ export function TemplateBuilder({ template }: { template: TaskTemplate }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
+    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
       <Panel className="p-4">
         <div className="mb-4 space-y-3">
           <label className="block text-xs font-medium uppercase tracking-wide text-muted">
@@ -194,14 +211,6 @@ export function TemplateBuilder({ template }: { template: TaskTemplate }) {
       <Panel className="p-5 sm:p-6">
         {selected ? (
           <div className="animate-rise space-y-4">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-teal">
-                Editing step {selected.order}
-              </p>
-              <h2 className="mt-1 font-[family-name:var(--font-display)] text-2xl text-navy">
-                Step content
-              </h2>
-            </div>
             <label className="block text-xs font-medium uppercase tracking-wide text-muted">
               Title
               <input
@@ -226,18 +235,13 @@ export function TemplateBuilder({ template }: { template: TaskTemplate }) {
                 }
               />
             </label>
-            <label className="block text-xs font-medium uppercase tracking-wide text-muted">
-              Instructional content
-              <textarea
-                className="mt-1.5 min-h-56 w-full rounded-xl border border-line bg-sand/40 px-3 py-2.5 text-sm leading-relaxed text-navy outline-none focus:border-teal"
-                value={selected.content}
-                onChange={(e) =>
-                  updateStep(template.id, selected.id, {
-                    content: e.target.value,
-                  })
-                }
-              />
-            </label>
+
+            <StepRichEditor
+              step={normalizeStep(selected)}
+              onChange={(patch) =>
+                updateStep(template.id, selected.id, patch)
+              }
+            />
           </div>
         ) : (
           <p className="text-sm text-muted">Add a step to begin editing.</p>

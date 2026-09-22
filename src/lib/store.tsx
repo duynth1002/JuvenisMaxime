@@ -23,8 +23,9 @@ import type {
   StepSubmission,
   TaskTemplate,
 } from "./types";
+import { normalizeStep } from "./step-content";
 
-const STORAGE_KEY = "jm-simulation-demo-v3";
+const STORAGE_KEY = "jm-simulation-demo-v4";
 
 type StoreContextValue = AppState & {
   hydrated: boolean;
@@ -69,7 +70,10 @@ const StoreContext = createContext<StoreContextValue | null>(null);
 
 function createInitialState(): AppState {
   return {
-    templates: structuredClone(SEED_TEMPLATES),
+    templates: structuredClone(SEED_TEMPLATES).map((t) => ({
+      ...t,
+      steps: t.steps.map(normalizeStep),
+    })),
     students: structuredClone(SEED_STUDENTS),
     assignments: structuredClone(SEED_ASSIGNMENTS),
     approvals: [],
@@ -83,9 +87,14 @@ function loadState(): AppState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return createInitialState();
     const parsed = JSON.parse(raw) as Partial<AppState>;
+    const base = createInitialState();
     return {
-      ...createInitialState(),
+      ...base,
       ...parsed,
+      templates: (parsed.templates ?? base.templates).map((t) => ({
+        ...t,
+        steps: t.steps.map(normalizeStep),
+      })),
       approvals: parsed.approvals ?? [],
       session: parsed.session ?? null,
     };
@@ -168,6 +177,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             description: "Introduce the scenario and first deliverable.",
             content:
               "Write the instructional content students will see for this opening step.",
+            highlights: [],
+            media: [],
           },
         ],
       };
@@ -205,6 +216,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           description: "Add a short description for this step.",
           content: "Write the instructional content students will see here.",
           order: nextOrder,
+          highlights: [],
+          media: [],
         };
         return { ...t, steps: [...t.steps, step] };
       }),

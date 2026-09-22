@@ -13,6 +13,7 @@ import {
   StepSubmissionForm,
   SubmissionWorkView,
 } from "@/components/step-submission";
+import { StepContentView } from "@/components/step-content-view";
 import { Badge, Button, Panel, ProgressBar } from "@/components/ui";
 import { useStore } from "@/lib/store";
 import type { Assignment, StepSubmission, TaskTemplate } from "@/lib/types";
@@ -210,11 +211,7 @@ export function TaskWorkspace({
               ) : null}
             </div>
 
-            <div className="rounded-2xl border border-line bg-sand/50 p-5">
-              <p className="whitespace-pre-wrap text-sm leading-7 text-ink">
-                {active.content}
-              </p>
-            </div>
+            <StepContentView step={active} />
 
             {!preview && activeApproval?.status === "rejected" ? (
               <div className="mt-4 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
